@@ -14,8 +14,6 @@ profiling = []
 
 [dependencies]
 earthcraft-core.workspace = true
-tokio.workspace = true
-reqwest.workspace = true
 serde_json.workspace = true
 image.workspace = true
 png.workspace = true
@@ -26,10 +24,20 @@ glam.workspace = true
 quick-xml.workspace = true
 kml.workspace = true
 zip.workspace = true
-moka.workspace = true
 rayon.workspace = true
+fst.workspace = true
+semver.workspace = true
+
+# Playground's web build (patches/google-earth.yaml): what has no browser side.
+[target.'cfg(not(target_arch = "wasm32"))'.dependencies]
+tokio.workspace = true
+reqwest.workspace = true
+moka.workspace = true
 rusqlite.workspace = true
 tokio-rusqlite.workspace = true
-fst.workspace = true
 self_update.workspace = true
-semver.workspace = true
+
+[target.'cfg(all(target_arch = "wasm32"))'.dependencies]
+earthcraft-playground = { path = "../earthcraft-playground" }
+earthcraft-playground-tokio = { path = "../earthcraft-playground/tokio" }
+earthcraft-playground-reqwest = { path = "../earthcraft-playground/reqwest" }

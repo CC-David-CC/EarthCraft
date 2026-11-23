@@ -30,3 +30,9 @@ pub mod updater;
 pub mod vessels;
 
 pub mod sky;
+
+// Playground's browser build: Tokio and reqwest as a page has them (patches/google-earth.yaml).
+#[cfg(target_arch = "wasm32")]
+extern crate earthcraft_playground_reqwest as reqwest;
+#[cfg(target_arch = "wasm32")]
+extern crate earthcraft_playground_tokio as tokio;

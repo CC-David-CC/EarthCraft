@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+  <title>EarthCraft</title>
+  <!-- EarthCraft in the browser, for Playground (patches/google-earth.yaml in github.com/daijro/openplayground). -->
+  <link data-trunk rel="rust" href="apps/earthcraft/Cargo.toml" data-bin="earthcraft" data-wasm-no-import data-wasm-opt="0" />
+  <link data-trunk rel="copy-file" href="web/canvas.css" />
+  <link data-trunk rel="copy-file" href="web/startup.mjs" />
+  <link rel="stylesheet" href="./canvas.css" />
+  <script type="module" src="./startup.mjs"></script>
+</head>
+<body>
+  <canvas id="earthcraft_canvas"></canvas>
+  <div id="earthcraft_loading">Loading EarthCraft&hellip;</div>
+</body>
+</html>

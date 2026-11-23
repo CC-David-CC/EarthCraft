@@ -57,3 +57,7 @@ impl App {
             .zoom_at_for_model(factor, cursor, rect, aspect, self.active_earth_model());
     }
 }
+
+// Playground's browser build: the clock (patches/google-earth.yaml).
+#[cfg(target_arch = "wasm32")]
+use earthcraft_playground::std;

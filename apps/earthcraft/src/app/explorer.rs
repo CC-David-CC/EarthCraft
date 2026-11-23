@@ -167,7 +167,9 @@ impl App {
                         ui.small(lg.text("explorer-radar-explanation"));
                     }
                 }
+                #[cfg(not(target_arch = "wasm32"))]
                 ui.checkbox(&mut self.show_flights, lg.text("layers-flights-toggle"));
+                #[cfg(target_arch = "wasm32")] super::web::no_flights(ui, lg.text("layers-flights-toggle"));
                 if self.show_flights {
                     super::ui::aircraft::draw_status(ui, &self.live_aircraft.snapshot(), lg);
                     ui.hyperlink_to("OpenSky Network", "https://opensky-network.org/");
@@ -241,6 +243,7 @@ impl App {
                         }
                     });
                     ui.separator();
+#[cfg(target_arch = "wasm32")] super::web::sky_section();
                     ui.heading(lg.text("explorer-sky-galaxy"));
                     ui.horizontal(|ui| {
                         let hint = lg.text(if self.explorer.sky_bytes.is_some() {
@@ -300,3 +303,9 @@ mod tests {
         );
     }
 }
+
+// Playground's browser build: Playground's dialogs, whose answers land in explorer/web.rs (patches/google-earth.yaml).
+#[cfg(target_arch = "wasm32")]
+use super::web::rfd;
+#[cfg(target_arch = "wasm32")]
+mod web;

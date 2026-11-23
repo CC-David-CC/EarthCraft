@@ -4,7 +4,7 @@ use std::sync::atomic::{AtomicU64, Ordering};
 
 static NEXT_ID: AtomicU64 = AtomicU64::new(1);
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, PartialEq)]
 pub enum PlaceItem {
     Folder {
         name: String,
@@ -15,7 +15,7 @@ pub enum PlaceItem {
     Marker(Placemark),
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, PartialEq)]
 pub struct PlaceNode {
     id: u64,
     pub visible: bool,
@@ -70,7 +70,7 @@ impl PlaceNode {
     }
 }
 
-#[derive(Clone, Debug, Default)]
+#[derive(Clone, Debug, Default, PartialEq)]
 pub struct Places {
     pub roots: Vec<PlaceNode>,
 }

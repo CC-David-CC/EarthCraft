@@ -24,3 +24,7 @@ pub(crate) fn default_out_dir(parent: &str) -> String {
     };
     base.join("EarthCraft").to_string_lossy().into_owned()
 }
+
+// Playground's browser build: HOME (patches/google-earth.yaml).
+#[cfg(target_arch = "wasm32")]
+use earthcraft_playground::std;

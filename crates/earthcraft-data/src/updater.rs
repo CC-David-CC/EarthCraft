@@ -1,4 +1,9 @@
 //! One startup check and click-to-install updates, independent of the desktop UI.
+#[cfg(not(target_arch = "wasm32"))]
+mod release;
+// Playground's browser build: no updates to install (patches/google-earth.yaml).
+#[cfg(target_arch = "wasm32")]
+#[path = "updater/web.rs"]
 mod release;
 #[cfg(test)]
 mod tests;
@@ -196,7 +201,7 @@ impl UpdateService {
             let state = match result {
                 Ok(true) => UpdateState::ReadyToRestart { version: selected.version.clone() },
                 Ok(false) => UpdateState::Failed { operation: UpdateOperation::Install, message: "The updater did not install the selected release. Open Releases to update manually.".into() },
-                Err(error @ self_update::Error::InstallPathNotWritable { .. }) => UpdateState::Unsupported { version: selected.version.clone(), reason: format!("Update installation is protected: {error}. Open Releases or use your package manager to update.") },
+                #[cfg(not(target_arch = "wasm32"))] Err(error @ self_update::Error::InstallPathNotWritable { .. }) => UpdateState::Unsupported { version: selected.version.clone(), reason: format!("Update installation is protected: {error}. Open Releases or use your package manager to update.") },
                 Err(error) => UpdateState::Failed { operation: UpdateOperation::Install, message: format!("Update installation failed: {error}. Open Releases to update manually if this installation is protected.") },
             };
             sender.send_replace(Snapshot { state, selected: Some(selected) });

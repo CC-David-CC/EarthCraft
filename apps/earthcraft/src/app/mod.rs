@@ -70,6 +70,8 @@ pub(crate) struct App {
     cache_controls: cache::CacheControls,
     tile_warmup: TileWarmup,
     provider: Provider,
+    #[cfg(target_arch = "wasm32")]
+    workspace_places: web::WorkspacePlaces,
     show_grid: bool,
     show_terrain: bool,
     terrain_exaggeration: f32,
@@ -237,6 +239,8 @@ impl App {
             renderer,
             scale_bar_cache: earthcraft_render::scale_bar::ScaleBarCache::default(),
             provider: Provider::Satellite,
+            #[cfg(target_arch = "wasm32")]
+            workspace_places: web::WorkspacePlaces::default(),
             tile_warmup: TileWarmup::startup_satellite(),
             cache_controls: cache::CacheControls::default(),
             show_grid: false,
@@ -553,3 +557,9 @@ impl eframe::App for App {
         }
     }
 }
+
+// Playground's browser build: the page, and the clock (patches/google-earth.yaml).
+#[cfg(target_arch = "wasm32")]
+pub(crate) mod web;
+#[cfg(target_arch = "wasm32")]
+use earthcraft_playground::std;

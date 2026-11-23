@@ -35,3 +35,7 @@ pub struct PlanetSave {
     pub texture: ImageSource,
     pub sky: Option<ImageSource>,
 }
+
+// Playground's browser build: the files (patches/google-earth.yaml).
+#[cfg(target_arch = "wasm32")]
+use earthcraft_playground::std;

@@ -66,3 +66,7 @@ fn main() -> Result<(), eframe::Error> {
         }
     }
 }
+
+// Playground's browser build: run_native starts the app on the page (patches/google-earth.yaml).
+#[cfg(target_arch = "wasm32")]
+use app::web::{eframe, self_update};

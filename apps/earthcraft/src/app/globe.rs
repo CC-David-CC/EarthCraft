@@ -161,7 +161,8 @@ impl App {
             release_index: self.wayback_idx,
             grid: self.show_grid,
             atmosphere: self.show_atmo,
-            terrain: self.show_terrain && self.cam.alt <= 150.0
+            terrain: self.show_terrain
+                && self.cam.alt <= 150.0
                 && self.explorer.active == earthcraft_core::body::Body::Earth,
             terrain_exaggeration: self.terrain_exaggeration,
             sunlight: self.show_sun,
@@ -527,3 +528,7 @@ fn draw_planet(
     mesh.indices = geometry.indices;
     painter.add(egui::Shape::mesh(mesh));
 }
+
+// Playground's browser build: the clock (patches/google-earth.yaml).
+#[cfg(target_arch = "wasm32")]
+use earthcraft_playground::std;

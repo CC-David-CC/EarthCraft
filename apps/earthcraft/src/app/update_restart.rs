@@ -182,3 +182,7 @@ mod tests {
         assert!(!restart.request.requested.load(Ordering::Acquire));
     }
 }
+
+// Playground's browser build: Playground's dialogs (patches/google-earth.yaml).
+#[cfg(target_arch = "wasm32")]
+use super::web::rfd;

@@ -86,7 +86,7 @@ impl App {
                 }
             }
             Action::Open => self.pick_kml_open(),
-            Action::Save => self.save_kml_to(self.resolve_kml_path(&self.kml_path)),
+            Action::Save => self.save_current_kml(),
             Action::SaveAs => self.pick_kml_save_as(),
             Action::Screenshot if self.image.is_some() => self.save_screenshot(),
             Action::Screenshot => {}

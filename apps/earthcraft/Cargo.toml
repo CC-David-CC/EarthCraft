@@ -29,12 +29,11 @@ gilrs.workspace = true
 ab_glyph.workspace = true
 rstar.workspace = true
 sys-locale.workspace = true
-self_update.workspace = true
 
 # Native file/folder dialogs. Linux and FreeBSD use GTK3 without a desktop portal.
 [target.'cfg(any(target_os = "linux", target_os = "freebsd"))'.dependencies]
 rfd = { workspace = true, features = ["gtk3"] }
-[target.'cfg(not(any(target_os = "linux", target_os = "freebsd")))'.dependencies]
+[target.'cfg(not(any(target_os = "linux", target_os = "freebsd", target_arch = "wasm32")))'.dependencies]
 rfd = { workspace = true, default-features = true }
 
 [package.metadata.generate-rpm]
@@ -64,3 +63,16 @@ espeak-ng = "*"
 
 [target.'cfg(target_os = "macos")'.dependencies]
 muda.workspace = true
+
+# Playground's web build (patches/google-earth.yaml): what has no browser side.
+[target.'cfg(not(target_arch = "wasm32"))'.dependencies]
+self_update.workspace = true
+
+[target.'cfg(all(target_arch = "wasm32"))'.dependencies]
+earthcraft-playground = { path = "../../crates/earthcraft-playground" }
+wgpu = { workspace = true, features = ["webgl"] }
+sys-locale = { workspace = true, features = ["js"] }
+wasm-bindgen = "0.2"
+wasm-bindgen-futures = "0.4"
+js-sys = "0.3"
+web-sys = { version = "0.3", features = ["Window", "Document", "Element", "HtmlCanvasElement", "console"] }

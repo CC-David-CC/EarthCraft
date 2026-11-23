@@ -10,13 +10,17 @@ const MAX_RENDER_WIDTH_PX: usize = 2000;
 const MIN_RENDER_HEIGHT_PX: usize = 32;
 pub const SCENE_TIME_UPDATE_INTERVAL_SECS: f64 = 60.0;
 pub fn raster_size(size_points: Vec2, pixels_per_point: f32, idle: bool) -> (usize, usize) {
+    #[cfg(target_arch = "wasm32")]
+    let max_width: usize = if idle { 1600 } else { 560 };
+    #[cfg(not(target_arch = "wasm32"))]
+    let max_width: usize = MAX_RENDER_WIDTH_PX;
     let scale = if idle {
         IDLE_RENDER_SCALE
     } else {
         ACTIVE_RENDER_SCALE
     };
-    let width = ((size_points.x * pixels_per_point * scale) as usize)
-        .clamp(MIN_RENDER_WIDTH_PX, MAX_RENDER_WIDTH_PX);
+    let width =
+        ((size_points.x * pixels_per_point * scale) as usize).clamp(MIN_RENDER_WIDTH_PX, max_width);
     let height =
         ((width as f32 * size_points.y / size_points.x) as usize).max(MIN_RENDER_HEIGHT_PX);
     (width, height)
@@ -173,13 +177,25 @@ mod tests {
     #[test]
     fn terrain_toggle_and_exaggeration_invalidate_presentation() {
         let mut view = RasterView {
-            camera: Cam { lat: 0.0, lon: 0.0, alt: 10.0, heading: 0.0 },
+            camera: Cam {
+                lat: 0.0,
+                lon: 0.0,
+                alt: 10.0,
+                heading: 0.0,
+            },
             model: earthcraft_core::earth_model::EarthModel::Wgs84,
-            width: 80, height: 60, aspect: 4.0 / 3.0,
-            provider: Provider::Satellite, release_index: 0,
-            grid: false, atmosphere: false, sunlight: false,
-            sky: false, cinematic_sky: false,
-            terrain: false, terrain_exaggeration: 1.0,
+            width: 80,
+            height: 60,
+            aspect: 4.0 / 3.0,
+            provider: Provider::Satellite,
+            release_index: 0,
+            grid: false,
+            atmosphere: false,
+            sunlight: false,
+            sky: false,
+            cinematic_sky: false,
+            terrain: false,
+            terrain_exaggeration: 1.0,
         };
         let flat = view.keys(120.0);
         view.terrain = true;

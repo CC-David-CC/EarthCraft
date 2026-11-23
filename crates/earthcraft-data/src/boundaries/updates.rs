@@ -7,6 +7,7 @@ pub struct BoundarySnapshot {
     pub names: Arc<Vec<MapLabel>>,
 }
 
+#[cfg(not(target_arch = "wasm32"))]
 pub struct BoundaryUpdates {
     latest: Arc<Mutex<Option<BoundarySnapshot>>>,
 }
@@ -26,6 +27,7 @@ fn apply(data: &mut BoundaryData, patch: Patch) {
     dedupe_city_labels(&mut data.labels);
 }
 
+#[cfg(not(target_arch = "wasm32"))]
 impl BoundaryUpdates {
     pub fn new(
         patches: mpsc::Receiver<Patch>,
@@ -110,3 +112,9 @@ mod tests {
         ));
     }
 }
+
+// Playground's browser build: the merge without its thread (patches/google-earth.yaml).
+#[cfg(target_arch = "wasm32")]
+mod web;
+#[cfg(target_arch = "wasm32")]
+pub use web::BoundaryUpdates;

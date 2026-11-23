@@ -108,9 +108,11 @@ struct Shared {
     mailbox: Mutex<Mailbox>,
     wake: Condvar,
 }
+#[cfg(not(target_arch = "wasm32"))]
 pub struct AircraftWorker {
     shared: Arc<Shared>,
 }
+#[cfg(not(target_arch = "wasm32"))]
 impl AircraftWorker {
     pub fn new(repaint: impl Fn() + Send + 'static) -> std::io::Result<Self> {
         let shared = Arc::new(Shared::default());
@@ -152,6 +154,7 @@ impl AircraftWorker {
         self.shared.mailbox.lock().unwrap().completed.take()
     }
 }
+#[cfg(not(target_arch = "wasm32"))]
 impl Drop for AircraftWorker {
     fn drop(&mut self) {
         let mut state = self.shared.mailbox.lock().unwrap();
@@ -163,3 +166,9 @@ impl Drop for AircraftWorker {
         drop((pending, completed));
     }
 }
+
+// Playground's browser build: the projection without its thread (patches/google-earth.yaml).
+#[cfg(target_arch = "wasm32")]
+mod web;
+#[cfg(target_arch = "wasm32")]
+pub use web::AircraftWorker;

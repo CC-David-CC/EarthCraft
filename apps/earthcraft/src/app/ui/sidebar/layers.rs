@@ -125,8 +125,10 @@ impl App {
         ui.checkbox(&mut self.show_terrain, lg.text("layers-terrain-toggle"));
         if self.show_terrain {
             ui.indent("terrain_controls", |ui| {
-                ui.add(egui::Slider::new(&mut self.terrain_exaggeration, 0.5..=3.0)
-                    .text(lg.text("layers-terrain-exaggeration")));
+                ui.add(
+                    egui::Slider::new(&mut self.terrain_exaggeration, 0.5..=3.0)
+                        .text(lg.text("layers-terrain-exaggeration")),
+                );
                 ui.weak(lg.text("layers-terrain-help"));
                 ui.hyperlink_to("© Mapterhorn", "https://mapterhorn.com/attribution");
             });
@@ -189,7 +191,10 @@ impl App {
     }
     fn layer_objects(&mut self, ui: &mut egui::Ui) {
         let lg = self.lang;
+        #[cfg(not(target_arch = "wasm32"))]
         ui.checkbox(&mut self.show_flights, lg.text("layers-flights-toggle"));
+        #[cfg(target_arch = "wasm32")]
+        crate::app::web::no_flights(ui, lg.text("layers-flights-toggle"));
         if self.show_flights {
             super::super::aircraft::draw_status(ui, &self.live_aircraft.snapshot(), lg);
             ui.hyperlink_to("OpenSky Network", "https://opensky-network.org/");

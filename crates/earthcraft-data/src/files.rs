@@ -233,3 +233,7 @@ impl FileJobs {
 
 #[cfg(test)]
 mod tests;
+
+// Playground's browser build: the files (patches/google-earth.yaml).
+#[cfg(target_arch = "wasm32")]
+use earthcraft_playground::std;

@@ -45,8 +45,7 @@ impl App {
         }
         self.place_reveal_requested = false;
         if save_now {
-            let path = self.resolve_kml_path(&self.kml_path.clone());
-            self.save_kml_to(path);
+            self.save_current_kml();
         }
         if save_as {
             self.pick_kml_save_as();

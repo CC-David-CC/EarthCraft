@@ -63,3 +63,7 @@ pub(super) fn save(
     writer.flush()?;
     Ok(FileOutcome::ScreenshotSaved { path: candidate })
 }
+
+// Playground's browser build: the files (patches/google-earth.yaml).
+#[cfg(target_arch = "wasm32")]
+use earthcraft_playground::std;

@@ -4,7 +4,11 @@ use std::collections::VecDeque;
 
 // z0..=4: 341 standard RGBA tiles, about 85 MiB within the 256 MiB cache target.
 // This is a global overview, not a download of detailed imagery at every zoom.
+#[cfg(not(target_arch = "wasm32"))]
 const STARTUP_OVERVIEW_MAX_ZOOM: u8 = 4;
+// Browser sessions prewarm only the five coarsest NASA overview tiles.
+#[cfg(target_arch = "wasm32")]
+const STARTUP_OVERVIEW_MAX_ZOOM: u8 = 1;
 // Six workers serve visible tiles; overview work occupies at most two idle slots.
 const OVERVIEW_INFLIGHT_LIMIT: usize = 2;
 

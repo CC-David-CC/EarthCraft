@@ -23,3 +23,6 @@ unicode-normalization.workspace = true
 
 [dev-dependencies]
 serde_json.workspace = true
+
+[target.'cfg(all(target_arch = "wasm32"))'.dependencies]
+earthcraft-playground = { path = "../earthcraft-playground" }

@@ -1153,6 +1153,7 @@ dependencies = [
  "ab_glyph",
  "earthcraft-core",
  "earthcraft-data",
+ "earthcraft-playground",
  "earthcraft-render",
  "eframe",
  "egui-wgpu",
@@ -1160,11 +1161,15 @@ dependencies = [
  "fontdb",
  "gilrs",
  "image",
+ "js-sys",
  "muda",
  "rfd",
  "rstar",
  "self_update",
  "sys-locale",
+ "wasm-bindgen",
+ "wasm-bindgen-futures",
+ "web-sys",
  "wgpu",
 ]
 
@@ -1172,6 +1177,7 @@ dependencies = [
 name = "earthcraft-core"
 version = "0.2.0"
 dependencies = [
+ "earthcraft-playground",
  "emath",
  "fluent-bundle",
  "fluent-syntax",
@@ -1191,6 +1197,9 @@ version = "0.2.0"
 dependencies = [
  "bytemuck",
  "earthcraft-core",
+ "earthcraft-playground",
+ "earthcraft-playground-reqwest",
+ "earthcraft-playground-tokio",
  "fst",
  "glam",
  "image",
@@ -1209,6 +1218,40 @@ dependencies = [
  "tokio",
  "tokio-rusqlite",
  "zip 2.4.2",
+]
+
+[[package]]
+name = "earthcraft-playground"
+version = "0.1.0"
+dependencies = [
+ "web-time",
+]
+
+[[package]]
+name = "earthcraft-playground-reqwest"
+version = "0.1.0"
+dependencies = [
+ "bytes",
+ "js-sys",
+ "reqwest",
+ "serde",
+ "serde_json",
+ "serde_urlencoded",
+ "tokio",
+ "wasm-bindgen",
+ "wasm-bindgen-futures",
+]
+
+[[package]]
+name = "earthcraft-playground-tokio"
+version = "0.1.0"
+dependencies = [
+ "earthcraft-playground",
+ "js-sys",
+ "tokio",
+ "wasm-bindgen",
+ "wasm-bindgen-futures",
+ "web-time",
 ]
 
 [[package]]
@@ -4708,7 +4751,10 @@ version = "0.3.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8eab9a99a024a169fe8a903cf9d4a3b3601109bcc13bd9e3c6fff259138626c4"
 dependencies = [
+ "js-sys",
  "libc",
+ "wasm-bindgen",
+ "web-sys",
 ]
 
 [[package]]

@@ -1,0 +1,13 @@
+# EarthCraft in the browser, for Playground (patches/google-earth.yaml in github.com/daijro/openplayground).
+# Build with: trunk build --release   (from the repository's root)
+[build]
+target = "index.html"
+public_url = "./"
+filehash = false
+dist = "target/trunk-dist"
+
+
+[[hooks]]
+stage = "post_build"
+command = "python3"
+command_arguments = ["web/prepare-html.py"]

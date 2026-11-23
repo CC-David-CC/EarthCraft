@@ -160,3 +160,7 @@ fn recolor_radar(src: [u8; 4]) -> [u8; 4] {
     };
     [r, g, b, src[3].min(200)]
 }
+
+// Playground's browser build: the clock (patches/google-earth.yaml).
+#[cfg(target_arch = "wasm32")]
+use earthcraft_playground::std;

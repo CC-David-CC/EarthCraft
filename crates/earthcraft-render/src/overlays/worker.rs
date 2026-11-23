@@ -109,10 +109,12 @@ struct Shared {
     mailbox: Mutex<Mailbox>,
     wake: Condvar,
 }
+#[cfg(not(target_arch = "wasm32"))]
 pub struct OverlayWorker {
     shared: Arc<Shared>,
 }
 
+#[cfg(not(target_arch = "wasm32"))]
 impl OverlayWorker {
     pub fn new(repaint: impl Fn() + Send + 'static) -> std::io::Result<Self> {
         let shared = Arc::new(Shared::default());
@@ -152,6 +154,7 @@ impl OverlayWorker {
         self.shared.mailbox.lock().unwrap().completed.take()
     }
 }
+#[cfg(not(target_arch = "wasm32"))]
 impl Drop for OverlayWorker {
     fn drop(&mut self) {
         let mut state = self.shared.mailbox.lock().unwrap();
@@ -324,3 +327,9 @@ mod tests {
         release.send(()).unwrap();
     }
 }
+
+// Playground's browser build: the preparation without its thread (patches/google-earth.yaml).
+#[cfg(target_arch = "wasm32")]
+mod web;
+#[cfg(target_arch = "wasm32")]
+pub use web::OverlayWorker;

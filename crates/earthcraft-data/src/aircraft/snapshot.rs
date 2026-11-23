@@ -70,3 +70,7 @@ pub(super) fn prepare(global: Samples, local: Samples, now: Instant, unix_secs: 
         expires,
     }
 }
+
+// Playground's browser build: the clock (patches/google-earth.yaml).
+#[cfg(target_arch = "wasm32")]
+use earthcraft_playground::std;

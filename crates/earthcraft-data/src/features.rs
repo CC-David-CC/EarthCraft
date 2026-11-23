@@ -175,3 +175,7 @@ mod tests {
         assert!(project::<Vec<u64>, _>(b"{\"features\":[{}]".as_slice(), |_, _| {}).is_err());
     }
 }
+
+// Playground's browser build: the files, the temp folder and the process id (patches/google-earth.yaml).
+#[cfg(target_arch = "wasm32")]
+use earthcraft_playground::std;

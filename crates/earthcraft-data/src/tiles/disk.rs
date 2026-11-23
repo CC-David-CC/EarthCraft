@@ -7,6 +7,11 @@ use std::{
     sync::atomic::{AtomicU64, Ordering},
 };
 
+#[cfg(not(target_arch = "wasm32"))]
+mod mbtiles;
+// Playground's browser build: no disk cache (patches/google-earth.yaml).
+#[cfg(target_arch = "wasm32")]
+#[path = "disk/web.rs"]
 mod mbtiles;
 pub(super) const DEFAULT_DISK_BUDGET_BYTES: u64 = 128 * 1024 * 1024;
 

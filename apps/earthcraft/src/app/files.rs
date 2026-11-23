@@ -21,8 +21,19 @@ impl App {
     }
 
     pub(super) fn save_kml_to(&mut self, path: PathBuf) {
+        #[cfg(target_arch = "wasm32")]
+        if super::web::saving_kml(self) {
+            self.status = "EarthCraft is saving the current places file.".into();
+            return;
+        }
+        #[cfg(target_arch = "wasm32")]
+        let target = path.clone();
         match self.file_jobs.save_kml(path, &self.placemarks) {
-            Ok(()) => self.kml_session.submitted(),
+            Ok(()) => {
+                self.kml_session.submitted();
+                #[cfg(target_arch = "wasm32")]
+                super::web::track_kml_save(self, target);
+            }
             Err(error) => {
                 self.status =
                     Lang::En.format("kml-save-error", &[("error", error.to_string().into())])
@@ -30,7 +41,24 @@ impl App {
         }
     }
 
+    pub(super) fn save_current_kml(&mut self) {
+        #[cfg(not(target_arch = "wasm32"))]
+        self.save_kml_to(self.resolve_kml_path(&self.kml_path));
+
+        #[cfg(target_arch = "wasm32")]
+        if let Some(path) = super::web::current_kml_path(self) {
+            self.save_kml_to(path);
+        } else {
+            self.pick_kml_save_as();
+        }
+    }
+
     pub(super) fn load_kml_from(&mut self, path: &std::path::Path) {
+        #[cfg(target_arch = "wasm32")]
+        if super::web::saving_kml(self) {
+            self.status = "EarthCraft is saving the current places file.".into();
+            return;
+        }
         match self.file_jobs.open_kml(path.to_path_buf(), self.lang) {
             Ok(()) => self.kml_session.submitted(),
             Err(error) => {
@@ -48,7 +76,14 @@ impl App {
     }
 
     pub(super) fn clear_places(&mut self) {
+        #[cfg(target_arch = "wasm32")]
+        if super::web::saving_kml(self) {
+            self.status = "EarthCraft is saving the current places file.".into();
+            return;
+        }
         self.placemarks = Default::default();
+        #[cfg(target_arch = "wasm32")]
+        super::web::clear_kml_binding(self);
         self.place_selection = None;
         self.place_reveal_requested = false;
         self.kml_path = "placemarks.kml".into();
@@ -99,20 +134,15 @@ impl App {
                     self.explorer.planet_saved(path, self.lang);
                 }
                 Ok(FileOutcome::KmlSaved { path }) => {
-                    // A save contains the whole tree, so reopen that snapshot only.
-                    self.kml_session.paths = vec![path.clone()];
-                    self.settings_writer.kml_paths(&self.kml_session.paths);
-                    self.kml_path = path.to_string_lossy().into_owned();
-                    self.status = self.lang.format(
-                        "kml-save-success",
-                        &[("path", path.display().to_string().into())],
-                    );
-                    self.status_file = Some(FileStatus {
-                        message: self.status.clone(),
-                        path,
-                    });
+                    #[cfg(not(target_arch = "wasm32"))]
+                    self.finish_kml_save(path);
+                    #[cfg(target_arch = "wasm32")]
+                    super::web::persist_kml(self, path);
                 }
                 Ok(FileOutcome::KmlLoaded { path, placemarks }) => {
+                    #[cfg(target_arch = "wasm32")]
+                    let first_workspace_file =
+                        self.kml_session.paths.is_empty() && self.placemarks.is_empty();
                     self.kml_session.remember(path.clone());
                     self.settings_writer.kml_paths(&self.kml_session.paths);
                     self.status = self.lang.format(
@@ -135,6 +165,8 @@ impl App {
                         );
                     }
                     self.placemarks.extend(placemarks);
+                    #[cfg(target_arch = "wasm32")]
+                    super::web::kml_loaded(self, &path, first_workspace_file);
                 }
                 Ok(FileOutcome::ScreenshotSaved { path }) => {
                     self.status = self.lang.format(
@@ -147,6 +179,10 @@ impl App {
                     });
                 }
                 Err(error) => {
+                    #[cfg(target_arch = "wasm32")]
+                    if kind == FileKind::SaveKml {
+                        super::web::cancel_kml_save(self);
+                    }
                     let id = match kind {
                         FileKind::OpenKml | FileKind::RestoreKml => "kml-open-error",
                         FileKind::SaveKml => "kml-save-error",
@@ -165,6 +201,21 @@ impl App {
                 }
             }
         }
+    }
+
+    pub(super) fn finish_kml_save(&mut self, path: PathBuf) {
+        // A save contains the whole tree, so reopen that snapshot only.
+        self.kml_session.paths = vec![path.clone()];
+        self.settings_writer.kml_paths(&self.kml_session.paths);
+        self.kml_path = path.to_string_lossy().into_owned();
+        self.status = self.lang.format(
+            "kml-save-success",
+            &[("path", path.display().to_string().into())],
+        );
+        self.status_file = Some(FileStatus {
+            message: self.status.clone(),
+            path,
+        });
     }
 
     pub(super) fn pick_kml_open(&mut self) {
@@ -249,3 +300,7 @@ impl App {
         }
     }
 }
+
+// Playground's browser build: Playground's dialogs (patches/google-earth.yaml).
+#[cfg(target_arch = "wasm32")]
+use super::web::rfd;

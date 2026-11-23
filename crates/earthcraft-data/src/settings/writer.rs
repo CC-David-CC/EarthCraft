@@ -235,3 +235,7 @@ mod tests {
         );
     }
 }
+
+// Playground's browser build: the files, and the writer's thread, which never runs here (patches/google-earth.yaml).
+#[cfg(target_arch = "wasm32")]
+use earthcraft_playground::std;

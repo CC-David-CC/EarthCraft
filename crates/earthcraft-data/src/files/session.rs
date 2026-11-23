@@ -32,3 +32,7 @@ pub(super) fn restore(path: &Path, lang: Lang) -> Result<FileOutcome, crate::Err
     }
     Ok(FileOutcome::KmlRestored { files })
 }
+
+// Playground's browser build: the files (patches/google-earth.yaml).
+#[cfg(target_arch = "wasm32")]
+use earthcraft_playground::std;

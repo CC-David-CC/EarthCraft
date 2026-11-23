@@ -11,9 +11,11 @@ struct Shared {
     mailbox: Mutex<Mailbox>,
     wake: Condvar,
 }
+#[cfg(not(target_arch = "wasm32"))]
 pub struct LiveWorker {
     shared: Arc<Shared>,
 }
+#[cfg(not(target_arch = "wasm32"))]
 impl LiveWorker {
     pub fn new(repaint: impl Fn() + Send + 'static) -> std::io::Result<Self> {
         let shared = Arc::new(Shared::default());
@@ -55,6 +57,7 @@ impl LiveWorker {
         self.shared.mailbox.lock().unwrap().completed.take()
     }
 }
+#[cfg(not(target_arch = "wasm32"))]
 impl Drop for LiveWorker {
     fn drop(&mut self) {
         let mut state = self.shared.mailbox.lock().unwrap();
@@ -66,3 +69,9 @@ impl Drop for LiveWorker {
         drop((pending, completed));
     }
 }
+
+// Playground's browser build: the preparation without its thread (patches/google-earth.yaml).
+#[cfg(target_arch = "wasm32")]
+mod web;
+#[cfg(target_arch = "wasm32")]
+pub use web::LiveWorker;

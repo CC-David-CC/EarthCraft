@@ -33,3 +33,7 @@ mod tests {
         }
     }
 }
+
+// Playground's browser build: the desktop window's options, unused on the page (patches/google-earth.yaml).
+#[cfg(target_arch = "wasm32")]
+use crate::app::web::eframe;

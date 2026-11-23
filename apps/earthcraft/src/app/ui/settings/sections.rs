@@ -394,3 +394,7 @@ impl App {
         ui.weak(lg.text("settings-startup-help"));
     }
 }
+
+// Playground's browser build: Playground's dialogs (patches/google-earth.yaml).
+#[cfg(target_arch = "wasm32")]
+use crate::app::web::rfd;

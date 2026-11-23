@@ -278,3 +278,7 @@ mod tests {
         assert_eq!(v[0].observed_unix, 1_800_000_000.0);
     }
 }
+
+// Playground's browser build: the clock (patches/google-earth.yaml).
+#[cfg(target_arch = "wasm32")]
+use earthcraft_playground::std;

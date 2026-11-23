@@ -169,3 +169,7 @@ impl LiveMaps {
 fn refresh_due(last: Option<Instant>, loaded: bool, interval: Duration) -> bool {
     last.is_none_or(|t| t.elapsed() >= if loaded { interval } else { RETRY_INTERVAL })
 }
+
+// Playground's browser build: the clock (patches/google-earth.yaml).
+#[cfg(target_arch = "wasm32")]
+use earthcraft_playground::std;

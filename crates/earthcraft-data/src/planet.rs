@@ -144,3 +144,7 @@ mod tests {
         assert!(encode_planet("x", vec![1, 2, 3], Vec::new()).is_err());
     }
 }
+
+// Playground's browser build: the files (patches/google-earth.yaml).
+#[cfg(target_arch = "wasm32")]
+use earthcraft_playground::std;

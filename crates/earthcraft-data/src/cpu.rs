@@ -48,6 +48,8 @@ pub(crate) async fn run<T: Send + 'static>(
     service: Service,
     work: impl FnOnce() -> Result<T, crate::Error> + Send + 'static,
 ) -> Result<T, crate::Error> {
+    #[cfg(target_arch = "wasm32")]
+    return catch_panic(work);
     #[cfg(feature = "profiling")]
     let queued = std::time::Instant::now();
     #[cfg(feature = "profiling")]

@@ -21,8 +21,10 @@ pub enum Error {
     Zip(#[from] zip::result::ZipError),
     #[error(transparent)]
     PrefixIndex(#[from] fst::Error),
+    #[cfg(not(target_arch = "wasm32"))]
     #[error(transparent)]
     Sqlite(#[from] rusqlite::Error),
+    #[cfg(not(target_arch = "wasm32"))]
     #[error(transparent)]
     SqliteWorker(#[from] tokio_rusqlite::Error),
     #[error(transparent)]

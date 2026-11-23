@@ -188,6 +188,8 @@ controls-help-text = • Arrastar (esq.): girar o globo
 placemarks-fallback-name = Sem nome
 
 provider-satellite-label = Satélite (Esri World Imagery)
+provider-blue-marble-label = Blue Marble da NASA
+provider-blue-marble-attribution = Observatório da Terra da NASA · MODIS · GIBS
 
 provider-wayback-label = Imagens históricas (Esri Wayback)
 

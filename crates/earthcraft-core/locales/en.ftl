@@ -188,6 +188,8 @@ controls-help-text = • Drag (left): rotate the globe
 placemarks-fallback-name = Unnamed
 
 provider-satellite-label = Satellite (Esri World Imagery)
+provider-blue-marble-label = NASA Blue Marble
+provider-blue-marble-attribution = NASA Earth Observatory · MODIS · GIBS
 
 provider-wayback-label = Historical imagery (Esri Wayback)
 

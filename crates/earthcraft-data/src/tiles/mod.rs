@@ -25,15 +25,22 @@ pub enum Provider {
     TerrainDem,
 }
 impl Provider {
+    #[cfg(not(target_arch = "wasm32"))]
     pub const ALL: [Provider; 4] = [
         Provider::Satellite,
         Provider::Wayback,
         Provider::Streets,
         Provider::Topo,
     ];
+    #[cfg(target_arch = "wasm32")]
+    pub const ALL: [Provider; 1] = [Provider::Satellite];
     /// All cached providers, including the non-imagery elevation source.
     pub const CACHE_ALL: [Provider; 5] = [
-        Provider::Satellite, Provider::Wayback, Provider::Streets, Provider::Topo, Provider::TerrainDem,
+        Provider::Satellite,
+        Provider::Wayback,
+        Provider::Streets,
+        Provider::Topo,
+        Provider::TerrainDem,
     ];
     pub fn id(self) -> u64 {
         match self {
@@ -59,6 +66,9 @@ impl Provider {
     }
     pub fn name(self, lg: Lang) -> &'static str {
         match self {
+            #[cfg(target_arch = "wasm32")]
+            Provider::Satellite => lg.text("provider-blue-marble-label"),
+            #[cfg(not(target_arch = "wasm32"))]
             Provider::Satellite => lg.text("provider-satellite-label"),
             Provider::Wayback => lg.text("provider-wayback-label"),
             Provider::Streets => lg.text("provider-streets-label"),
@@ -68,6 +78,9 @@ impl Provider {
     }
     fn dir(self) -> &'static str {
         match self {
+            #[cfg(target_arch = "wasm32")]
+            Provider::Satellite => "nasa_blue_marble",
+            #[cfg(not(target_arch = "wasm32"))]
             Provider::Satellite => "esri_sat",
             Provider::Wayback => "wayback",
             Provider::Streets => "osm",
@@ -77,7 +90,11 @@ impl Provider {
     }
     pub fn max_zoom(self) -> u8 {
         match self {
-            Provider::Satellite | Provider::Wayback => 17,
+            #[cfg(target_arch = "wasm32")]
+            Provider::Satellite => 8,
+            #[cfg(not(target_arch = "wasm32"))]
+            Provider::Satellite => 17,
+            Provider::Wayback => 17,
             Provider::Streets => 19,
             Provider::Topo => 17,
             Provider::TerrainDem => 17,
@@ -86,6 +103,11 @@ impl Provider {
     fn url(self, z: u8, x: u32, y: u32, rel: u16) -> String {
         match self {
             Provider::Wayback => wayback_tile_url(rel, z, x, y),
+            #[cfg(target_arch = "wasm32")]
+            Provider::Satellite => format!(
+                "https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/BlueMarble_ShadedRelief_Bathymetry/default/GoogleMapsCompatible_Level8/{z}/{y}/{x}.jpeg"
+            ),
+            #[cfg(not(target_arch = "wasm32"))]
             Provider::Satellite => format!(
                 "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
             ),
@@ -96,7 +118,11 @@ impl Provider {
     }
     pub fn attribution(self, lg: Lang) -> &'static str {
         match self {
-            Provider::Satellite | Provider::Wayback => lg.text("provider-imagery-attribution"),
+            #[cfg(target_arch = "wasm32")]
+            Provider::Satellite => lg.text("provider-blue-marble-attribution"),
+            #[cfg(not(target_arch = "wasm32"))]
+            Provider::Satellite => lg.text("provider-imagery-attribution"),
+            Provider::Wayback => lg.text("provider-imagery-attribution"),
             Provider::Streets => lg.text("provider-streets-attribution"),
             Provider::Topo => "© OpenTopoMap (CC-BY-SA), © OpenStreetMap",
             Provider::TerrainDem => "© Mapterhorn (mapterhorn.com/attribution)",
@@ -164,7 +190,6 @@ impl Tile {
         (self.w, self.h, &self.px)
     }
 
-
     /// Bilinear elevation in metres, decoded at each pixel *before* blending.
     /// Mapterhorn uses Terrarium: (R * 256 + G + B / 256) - 32768.
     pub fn sample_terrarium_m(&self, u: f64, v: f64) -> f64 {
@@ -225,8 +250,9 @@ mod sampling_tests {
         let tile = Tile {
             w: 2,
             h: 2,
-            px: vec![128,0,0,255, 131,232,0,255,
-                     128,0,0,255, 131,232,0,255],
+            px: vec![
+                128, 0, 0, 255, 131, 232, 0, 255, 128, 0, 0, 255, 131, 232, 0, 255,
+            ],
         };
         assert_eq!(tile.sample_terrarium_m(0.25, 0.5), 0.0);
         assert_eq!(tile.sample_terrarium_m(0.75, 0.5), 1000.0);

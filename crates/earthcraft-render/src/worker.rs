@@ -45,10 +45,12 @@ struct Shared<T> {
     wake: Condvar,
 }
 
+#[cfg(not(target_arch = "wasm32"))]
 pub struct RenderWorker<T = ()> {
     shared: Arc<Shared<T>>,
 }
 
+#[cfg(not(target_arch = "wasm32"))]
 impl RenderWorker {
     pub fn new(
         render: impl FnMut(&RenderRequest, Vec<u8>) -> crate::RenderedView + Send + 'static,
@@ -59,6 +61,7 @@ impl RenderWorker {
     }
 }
 
+#[cfg(not(target_arch = "wasm32"))]
 impl<T: Send + 'static> RenderWorker<T> {
     /// Prepare backend-specific CPU resources on the coordinator, before publication.
     pub fn with_prepare(
@@ -171,6 +174,7 @@ impl<T: Send + 'static> RenderWorker<T> {
     }
 }
 
+#[cfg(not(target_arch = "wasm32"))]
 impl<T> Drop for RenderWorker<T> {
     fn drop(&mut self) {
         let mut mailbox = self.shared.mailbox.lock().unwrap();
@@ -186,3 +190,9 @@ impl<T> Drop for RenderWorker<T> {
 
 #[cfg(test)]
 mod tests;
+
+// Playground's browser build: the coordinator without its thread (patches/google-earth.yaml).
+#[cfg(target_arch = "wasm32")]
+mod web;
+#[cfg(target_arch = "wasm32")]
+pub use web::RenderWorker;

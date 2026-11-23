@@ -397,3 +397,7 @@ mod tests;
 
 #[cfg(test)]
 mod benchmarks;
+
+// Playground's browser build: the clock, and Moka's cache without it (patches/google-earth.yaml).
+#[cfg(target_arch = "wasm32")]
+use earthcraft_playground::{moka, std};

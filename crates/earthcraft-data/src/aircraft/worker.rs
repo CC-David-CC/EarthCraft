@@ -200,3 +200,7 @@ pub(super) async fn run(
         }
     }
 }
+
+// Playground's browser build: the clock (patches/google-earth.yaml).
+#[cfg(target_arch = "wasm32")]
+use earthcraft_playground::std;
