@@ -182,8 +182,13 @@ fn render_row<const ELLIPSOID: bool>(
                 let initial = surface::<ELLIPSOID>(x, y, w, h, &ray, cfg, rays.model_geometry());
                 let (ray, light) = if cfg.terrain.is_some() {
                     terrain::displace(
-                        &ray, (initial.u, initial.v), initial.z0,
-                        initial.dist, rays.model_geometry(), cfg, loc,
+                        &ray,
+                        (initial.u, initial.v),
+                        initial.z0,
+                        initial.dist,
+                        rays.model_geometry(),
+                        cfg,
+                        loc,
                     )
                 } else {
                     (ray, 1.0)
